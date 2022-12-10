@@ -3,6 +3,8 @@ from random import randint
 import pygame, sys
 import random
 import time
+import math
+
 from pygame.locals import *
 from collections import OrderedDict
 
@@ -22,7 +24,7 @@ def loopFunction():
 
     entity = {}
 
-    numberOfEach = 5
+    numberOfEach = 1
 
     for i in range(numberOfEach):
         cooX = random.randint(0, 400)
@@ -41,7 +43,7 @@ def loopFunction():
     while run:
         while gameover:
             font = pygame.font.SysFont(None, 50)
-            end = font.render('Press Enter to restart game', True, (255, 255, 255))
+            end = font.render('Press Enter to restart', True, (255, 255, 255))
             screen.blit(end, (350, 500))
             pygame.display.flip()
             for event in pygame.event.get():
@@ -64,7 +66,43 @@ def loopFunction():
                 screen.fill(color)
 
                 for i in range(numberOfEach):
-                    print("test")
+
+                    #Rock
+                    target = "scissors"
+                    distanceList, idList = [],[]
+
+                    for j in range(numberOfEach):
+                        if entity[j]["state"] == "scissors":
+                            distanceList.append(math.hypot(entity[j]["posX"] - entity[j]["posX"], entity[j]["posY"] - entity[j]["posY"]))
+                            idList.append(j)
+                    nearestTargetId = distanceList.index(max(distanceList))
+                    nearestTarget = entity[idList[nearestTargetId]]
+
+
+                    if nearestTarget["posX"] > entity[i]["posX"]:
+                        cooX -= 1
+                    if nearestTarget["posX"] < entity[i]["posX"]:
+                        cooX += 1
+                    if nearestTarget["posY"] > entity[i]["posY"]:
+                        cooY -= 1
+                    if nearestTarget["posY"] > entity[i]["posY"]:
+                        cooY -= 1
+                    entity[i] = {'posX': cooX, 'posY': cooY, 'state': "rock"}
+                    screen.blit(rockImg, (cooX, cooY))
+
+                    #Paper
+                    target = "rock"
+                    cooX = random.randint(0, 400)
+                    cooY = random.randint(0, 400)
+                    entity[i] = {'posX': cooX, 'posY': cooY, 'state': "paper"}
+                    screen.blit(paperImg, (cooX, cooY))
+
+                    #Scissors
+                    target = "paper"
+                    cooX = random.randint(0, 400)
+                    cooY = random.randint(0, 400)
+                    entity[i] = {'posX': cooX, 'posY': cooY, 'state': "scissors"}
+                    screen.blit(scissorsImg, (cooX, cooY))
 
         pygame.display.flip()
 
