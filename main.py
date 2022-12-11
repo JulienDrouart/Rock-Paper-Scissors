@@ -40,6 +40,7 @@ def loopFunction():
         cooY = random.randint(0, 400)
         entities.append({'posX': cooX, 'posY': cooY, 'state': "scissors"})
         screen.blit(scissorsImg, (cooX, cooY))
+
     while run:
         while gameover:
             font = pygame.font.SysFont(None, 50)
@@ -64,21 +65,21 @@ def loopFunction():
 
             if start is True:
                 screen.fill(color)
-                for entity in entities:
+                for indexEntity,entity in enumerate(entities):
                     nearestTarget = ""
                     if entity["state"] == "rock":
                         # Rock
                         target = "scissors"
-                        distanceList, entitiesList = [], []
-
-                        for j in entities:
+                        distanceList, entitiesList, otherEntityRectList, otherEntityRectListId = [], [], [], []
+                        for indexJ, j in enumerate(entities):
                             if j["state"] == target:
                                 distanceList.append(math.hypot(entity["posX"] - j["posX"],
                                                                entity["posY"] - j["posY"]))
                                 entitiesList.append(j)
+                                otherEntityRectList.append(Rect(j["posX"], j["posY"], 16, 16))
+                                otherEntityRectListId.append(indexJ)
                         nearestTargetId = distanceList.index(min(distanceList))
                         nearestTarget = entitiesList[nearestTargetId]
-                        entityToUpdateId = entities.index(entity)
                         cooX = entity["posX"]
                         cooY = entity["posY"]
 
@@ -92,20 +93,27 @@ def loopFunction():
                             cooY -= entitySpeed
                         entity = {'posX': cooX, 'posY': cooY, 'state': "rock"}
                         screen.blit(rockImg, (cooX, cooY))
-                        entities[entityToUpdateId] = entity
+                        entities[indexEntity] = entity
+                        currentEntityRect = Rect(entity["posX"], entity["posY"], 16, 16)
+
+                        isEntityCollide = currentEntityRect.collidelist(otherEntityRectList)
+                        if isEntityCollide != -1:
+                            entityIdToUpdateStatus = otherEntityRectListId[isEntityCollide]
+                            entity[entityIdToUpdateStatus] = {'posX': nearestTarget["posX"], 'posY': nearestTarget["posY"], 'state': "rock"}
+
                     if entity["state"] == "paper":
                         # Paper
                         target = "rock"
-                        distanceList, entitiesList = [], []
-
-                        for j in entities:
+                        distanceList, entitiesList, otherEntityRectList, otherEntityRectListId = [], [], [], []
+                        for indexJ, j in enumerate(entities):
                             if j["state"] == target:
                                 distanceList.append(math.hypot(entity["posX"] - j["posX"],
                                                                entity["posY"] - j["posY"]))
                                 entitiesList.append(j)
+                                otherEntityRectList.append(Rect(j["posX"], j["posY"], 16, 16))
+                                otherEntityRectListId.append(indexJ)
                         nearestTargetId = distanceList.index(min(distanceList))
                         nearestTarget = entitiesList[nearestTargetId]
-                        entityToUpdateId = entities.index(entity)
                         cooX = entity["posX"]
                         cooY = entity["posY"]
 
@@ -117,23 +125,29 @@ def loopFunction():
                             cooY += entitySpeed
                         if nearestTarget["posY"] < entity["posY"]:
                             cooY -= entitySpeed
-
                         entity = {'posX': cooX, 'posY': cooY, 'state': "paper"}
                         screen.blit(paperImg, (cooX, cooY))
-                        entities[entityToUpdateId] = entity
+                        entities[indexEntity] = entity
+                        currentEntityRect = Rect(entity["posX"], entity["posY"], 16, 16)
+
+                        isEntityCollide = currentEntityRect.collidelist(otherEntityRectList)
+                        if isEntityCollide != -1:
+                            entityIdToUpdateStatus = otherEntityRectListId[isEntityCollide]
+                            entity[entityIdToUpdateStatus] = {'posX': nearestTarget["posX"],
+                                                              'posY': nearestTarget["posY"], 'state': "paper"}
                     if entity["state"] == "scissors":
                         # Scissors
                         target = "paper"
-                        distanceList, entitiesList = [], []
-
-                        for j in entities:
+                        distanceList, entitiesList, otherEntityRectList, otherEntityRectListId = [], [], [], []
+                        for indexJ, j in enumerate(entities):
                             if j["state"] == target:
                                 distanceList.append(math.hypot(entity["posX"] - j["posX"],
                                                                entity["posY"] - j["posY"]))
                                 entitiesList.append(j)
+                                otherEntityRectList.append(Rect(j["posX"], j["posY"], 16, 16))
+                                otherEntityRectListId.append(indexJ)
                         nearestTargetId = distanceList.index(min(distanceList))
                         nearestTarget = entitiesList[nearestTargetId]
-                        entityToUpdateId = entities.index(entity)
                         cooX = entity["posX"]
                         cooY = entity["posY"]
 
@@ -147,7 +161,14 @@ def loopFunction():
                             cooY -= entitySpeed
                         entity = {'posX': cooX, 'posY': cooY, 'state': "scissors"}
                         screen.blit(scissorsImg, (cooX, cooY))
-                        entities[entityToUpdateId] = entity
+                        entities[indexEntity] = entity
+                        currentEntityRect = Rect(entity["posX"], entity["posY"], 16, 16)
+
+                        isEntityCollide = currentEntityRect.collidelist(otherEntityRectList)
+                        if isEntityCollide != -1:
+                            entityIdToUpdateStatus = otherEntityRectListId[isEntityCollide]
+                            entity[entityIdToUpdateStatus] = {'posX': nearestTarget["posX"],
+                                                              'posY': nearestTarget["posY"], 'state': "scissors"}
 
         pygame.display.flip()
 
