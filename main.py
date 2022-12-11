@@ -21,25 +21,25 @@ def loopFunction():
     rockImg = pygame.image.load("rock.ico")
     paperImg = pygame.image.load("paper.ico")
     scissorsImg = pygame.image.load("scissors.ico")
+    entitySpeed = 0.01
 
-    entity = {}
+    entities = []
 
-    numberOfEach = 1
+    numberOfEach = 5
 
     for i in range(numberOfEach):
         cooX = random.randint(0, 400)
         cooY = random.randint(0, 400)
-        entity[i] = {'posX': cooX, 'posY': cooY, 'state': "rock"}
+        entities.append({'posX': cooX, 'posY': cooY, 'state': "rock"})
         screen.blit(rockImg, (cooX, cooY))
         cooX = random.randint(0, 400)
         cooY = random.randint(0, 400)
-        entity[i] = {'posX': cooX, 'posY': cooY, 'state': "paper"}
+        entities.append({'posX': cooX, 'posY': cooY, 'state': "paper"})
         screen.blit(paperImg, (cooX, cooY))
         cooX = random.randint(0, 400)
         cooY = random.randint(0, 400)
-        entity[i] = {'posX': cooX, 'posY': cooY, 'state': "scissors"}
+        entities.append({'posX': cooX, 'posY': cooY, 'state': "scissors"})
         screen.blit(scissorsImg, (cooX, cooY))
-
     while run:
         while gameover:
             font = pygame.font.SysFont(None, 50)
@@ -64,45 +64,90 @@ def loopFunction():
 
             if start is True:
                 screen.fill(color)
+                for entity in entities:
+                    nearestTarget = ""
+                    if entity["state"] == "rock":
+                        # Rock
+                        target = "scissors"
+                        distanceList, entitiesList = [], []
 
-                for i in range(numberOfEach):
+                        for j in entities:
+                            if j["state"] == target:
+                                distanceList.append(math.hypot(entity["posX"] - j["posX"],
+                                                               entity["posY"] - j["posY"]))
+                                entitiesList.append(j)
+                        nearestTargetId = distanceList.index(min(distanceList))
+                        nearestTarget = entitiesList[nearestTargetId]
+                        entityToUpdateId = entities.index(entity)
+                        cooX = entity["posX"]
+                        cooY = entity["posY"]
 
-                    #Rock
-                    target = "scissors"
-                    distanceList, idList = [],[]
+                        if nearestTarget["posX"] > entity["posX"]:
+                            cooX += entitySpeed
+                        if nearestTarget["posX"] < entity["posX"]:
+                            cooX -= entitySpeed
+                        if nearestTarget["posY"] > entity["posY"]:
+                            cooY += entitySpeed
+                        if nearestTarget["posY"] < entity["posY"]:
+                            cooY -= entitySpeed
+                        entity = {'posX': cooX, 'posY': cooY, 'state': "rock"}
+                        screen.blit(rockImg, (cooX, cooY))
+                        entities[entityToUpdateId] = entity
+                    if entity["state"] == "paper":
+                        # Paper
+                        target = "rock"
+                        distanceList, entitiesList = [], []
 
-                    for j in range(numberOfEach):
-                        if entity[j]["state"] == "scissors":
-                            distanceList.append(math.hypot(entity[j]["posX"] - entity[j]["posX"], entity[j]["posY"] - entity[j]["posY"]))
-                            idList.append(j)
-                    nearestTargetId = distanceList.index(max(distanceList))
-                    nearestTarget = entity[idList[nearestTargetId]]
+                        for j in entities:
+                            if j["state"] == target:
+                                distanceList.append(math.hypot(entity["posX"] - j["posX"],
+                                                               entity["posY"] - j["posY"]))
+                                entitiesList.append(j)
+                        nearestTargetId = distanceList.index(min(distanceList))
+                        nearestTarget = entitiesList[nearestTargetId]
+                        entityToUpdateId = entities.index(entity)
+                        cooX = entity["posX"]
+                        cooY = entity["posY"]
 
+                        if nearestTarget["posX"] > entity["posX"]:
+                            cooX += entitySpeed
+                        if nearestTarget["posX"] < entity["posX"]:
+                            cooX -= entitySpeed
+                        if nearestTarget["posY"] > entity["posY"]:
+                            cooY += entitySpeed
+                        if nearestTarget["posY"] < entity["posY"]:
+                            cooY -= entitySpeed
 
-                    if nearestTarget["posX"] > entity[i]["posX"]:
-                        cooX -= 1
-                    if nearestTarget["posX"] < entity[i]["posX"]:
-                        cooX += 1
-                    if nearestTarget["posY"] > entity[i]["posY"]:
-                        cooY -= 1
-                    if nearestTarget["posY"] > entity[i]["posY"]:
-                        cooY -= 1
-                    entity[i] = {'posX': cooX, 'posY': cooY, 'state': "rock"}
-                    screen.blit(rockImg, (cooX, cooY))
+                        entity = {'posX': cooX, 'posY': cooY, 'state': "paper"}
+                        screen.blit(paperImg, (cooX, cooY))
+                        entities[entityToUpdateId] = entity
+                    if entity["state"] == "scissors":
+                        # Scissors
+                        target = "paper"
+                        distanceList, entitiesList = [], []
 
-                    #Paper
-                    target = "rock"
-                    cooX = random.randint(0, 400)
-                    cooY = random.randint(0, 400)
-                    entity[i] = {'posX': cooX, 'posY': cooY, 'state': "paper"}
-                    screen.blit(paperImg, (cooX, cooY))
+                        for j in entities:
+                            if j["state"] == target:
+                                distanceList.append(math.hypot(entity["posX"] - j["posX"],
+                                                               entity["posY"] - j["posY"]))
+                                entitiesList.append(j)
+                        nearestTargetId = distanceList.index(min(distanceList))
+                        nearestTarget = entitiesList[nearestTargetId]
+                        entityToUpdateId = entities.index(entity)
+                        cooX = entity["posX"]
+                        cooY = entity["posY"]
 
-                    #Scissors
-                    target = "paper"
-                    cooX = random.randint(0, 400)
-                    cooY = random.randint(0, 400)
-                    entity[i] = {'posX': cooX, 'posY': cooY, 'state': "scissors"}
-                    screen.blit(scissorsImg, (cooX, cooY))
+                        if nearestTarget["posX"] > entity["posX"]:
+                            cooX += entitySpeed
+                        if nearestTarget["posX"] < entity["posX"]:
+                            cooX -= entitySpeed
+                        if nearestTarget["posY"] > entity["posY"]:
+                            cooY += entitySpeed
+                        if nearestTarget["posY"] < entity["posY"]:
+                            cooY -= entitySpeed
+                        entity = {'posX': cooX, 'posY': cooY, 'state': "scissors"}
+                        screen.blit(scissorsImg, (cooX, cooY))
+                        entities[entityToUpdateId] = entity
 
         pygame.display.flip()
 
